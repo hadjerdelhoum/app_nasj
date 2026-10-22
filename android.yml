@@ -1,0 +1,47 @@
+name: Build Android APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trouver le projet
+        id: p
+        run: |
+          D=$(dirname "$(find . -name package.json -not -path '*/node_modules/*' -not -path '*/server/*' -not -path '*/android/*' | head -1)")
+          echo "dir=$D" >> "$GITHUB_OUTPUT"
+          echo "Projet trouvé dans : $D"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Installer
+        working-directory: ${{ steps.p.outputs.dir }}
+        run: npm install
+
+      - name: Construire la partie web et synchroniser Android
+        working-directory: ${{ steps.p.outputs.dir }}
+        env:
+          # Optionnel : GitHub > Settings > Secrets and variables > Actions > Variables > VITE_API_URL
+          # (ex. https://api.mondomaine.com). Vide = mode démo local, sans serveur.
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+        run: npm run build && npx cap sync android
+
+      - name: Construire l'APK
+        working-directory: ${{ steps.p.outputs.dir }}/android
+        run: chmod +x gradlew && ./gradlew assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nasj-debug-apk
+          path: ${{ steps.p.outputs.dir }}/android/app/build/outputs/apk/debug/app-debug.apk
