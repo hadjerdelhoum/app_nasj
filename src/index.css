@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --page: #bfe3f6;
+  --ink: #24413d;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --page: #17313b; } }
+:root[data-theme="dark"] { --page: #17313b; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+html, body, #root { height: 100%; margin: 0; }
+body { font-family: Nunito, system-ui, sans-serif; background: var(--page); color: var(--ink); -webkit-tap-highlight-color: transparent; letter-spacing: -0.01em; }
+button { font-family: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid #2f8f83; outline-offset: 2px; }
+@keyframes bob { 50% { transform: translateY(-8px) rotate(1.5deg); } }
+@keyframes pop { 0% { transform: scale(.5); opacity: 0; } 70% { transform: scale(1.12); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+@keyframes ring { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(1.5); opacity: 0; } }
+@keyframes rise { from { transform: translateY(14px); opacity: 0; } }
+.bob { animation: bob 3.2s ease-in-out infinite; }
+.pop { animation: pop .5s ease both; }
+.shake { animation: shake .4s; }
+.ring { animation: ring 1.8s ease-out infinite; }
+.rise { animation: rise .4s ease both; }
+@media (prefers-reduced-motion: reduce) { .bob, .pop, .shake, .ring, .rise { animation: none; } }
+@keyframes breathe { 50% { transform: scale(1.06); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.breathe { animation: breathe 3s ease-in-out infinite; }
+.spin-slow { animation: spin 24s linear infinite; }
+.spin-rev { animation: spin 32s linear infinite reverse; }
+@media (prefers-reduced-motion: reduce) { .breathe, .spin-slow, .spin-rev { animation: none; } }
